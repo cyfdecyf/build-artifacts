@@ -3,7 +3,7 @@ name: Windows
 on:
   push:
     branches:
-      - build
+      - test
 
 jobs:
   build:
@@ -43,7 +43,8 @@ jobs:
 
       - name: Build artifacts
         run: |
-          xmake l scripts/build.lua -a ${{ matrix.arch }} -k ${{ matrix.kind }} -f "vs_runtime='${{ matrix.vs_runtime }}'" --vs_sdkver=10.0.19041.0
+          xmake l detect.sdks.find_vstudio
+          #xmake l scripts/build.lua -a ${{ matrix.arch }} -k ${{ matrix.kind }} -f "vs_runtime='${{ matrix.vs_runtime }}'" --vs_sdkver=10.0.19041.0
 
   update:
     needs: build
@@ -73,4 +74,4 @@ jobs:
           
       - name: Update manifest
         run: |
-          xmake l scripts/update.lua
+          #xmake l scripts/update.lua
