@@ -7,6 +7,8 @@ local options =
     {'a', "arch",      "kv", os.arch(), "Set architecture"},
     {'k', "kind",      "kv", nil,       "Set kind"},
     {'f', "configs",   "kv", nil,       "Set configs"},
+    {nil, "vs",        "kv", nil,       "The Version of Visual Studio"},
+    {nil, "vs_toolset","kv", nil,       "The Toolset Version of Visual Studio"},
     {nil, "vs_sdkver", "kv", nil,       "The Windows SDK Version of Visual Studio"}
 }
 
@@ -15,6 +17,12 @@ function build_artifacts(name, version, opt)
     if opt.configs then
         table.insert(argv, "-f")
         table.insert(argv, opt.configs)
+    end
+    if opt.vs then
+        table.insert(argv, "--vs=" .. opt.vs)
+    end
+    if opt.vs_toolset then
+        table.insert(argv, "--vs_toolset=" .. opt.vs_toolset)
     end
     if opt.vs_sdkver then
         table.insert(argv, "--vs_sdkver=" .. opt.vs_sdkver)
@@ -63,6 +71,7 @@ function main(...)
     local buildinfo = io.load(path.join(os.scriptdir(), "..", "build.txt"))
     for _, version in ipairs(buildinfo.versions) do
         local artifactfile = build(buildinfo.name, version, opt)
+        --[[
         local tag = buildinfo.name .. "-" .. version
         local found = try {function () os.execv("gh", {"release", "view", tag}); return true end}
         if found then
@@ -72,6 +81,6 @@ function main(...)
             if not created then
                 os.execv("gh", {"release", "upload", "--clobber", tag, artifactfile})
             end
-        end
+        end]]
     end
 end
