@@ -38,7 +38,11 @@ jobs:
 
       - name: Build artifacts
         run: |
-          xmake l scripts/build.lua -a ${{ matrix.arch }} -k ${{ matrix.kind }} -f "vs_runtime='${{ matrix.vs_runtime }}'" --vs=2015 --vs_toolset=14.0
+          xmake create test
+          cd test
+          xmake f --vs=2015 --vs_toolset=14.0 -cvD
+          xmake -rvD
+          --xmake l scripts/build.lua -a ${{ matrix.arch }} -k ${{ matrix.kind }} -f "vs_runtime='${{ matrix.vs_runtime }}'" --vs=2015 --vs_toolset=14.0
 
   update:
     needs: build
