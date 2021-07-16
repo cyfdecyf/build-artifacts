@@ -69,4 +69,4 @@ jobs:
           
       - name: Update manifest
         run: |
-          #xmake l scripts/update.lua
+          xmake l scripts/update.lua
