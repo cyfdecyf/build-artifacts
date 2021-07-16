@@ -10,6 +10,12 @@ function get_manifestkey(manifest)
     return key
 end
 
+function get_vcvars_for_msvc(buildhash, opt)
+    local msvc = toolchain.load("msvc", {plat = opt.plat, arch = opt.arch})
+    assert(msvc:check(), "msvc not found!")
+    return assert(msvc:config("vcvars"), "vcvars not found!")
+end
+
 function main()
     local buildinfo = io.load(path.join(os.scriptdir(), "..", "build.txt"))
     local name = buildinfo.name:lower()
@@ -30,7 +36,9 @@ function main()
             local buildid = path.basename(asset.name)
             manifest[buildid] = {
                 urls = asset.url,
-                sha256 = hash.sha256(path.join("..", "assets", asset.name))
+                sha256 = hash.sha256(path.join("..", "assets", asset.name)),
+                toolset = vcvars.VCToolsVersion,
+                sdkver = vcvars.WindowsSDKVersion
             }
         end
         if get_manifestkey(manifest) == manifest_oldkey then
