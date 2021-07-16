@@ -1,4 +1,6 @@
 import("core.base.option")
+import("core.base.semver")
+import("core.tool.toolchain")
 import("lib.detect.find_tool")
 
 local options =
@@ -31,6 +33,18 @@ function build_artifacts(name, version, opt)
     os.execv("xmake", argv)
 end
 
+function get_buildid_for_msvc(buildhash, opt)
+    local msvc = toolchain.load("msvc", {plat = opt.plat, arch = opt.arch})
+    assert(msvc:check(), "msvc not found!")
+    local vcvars = assert(msvc:config("vcvars"), "vcvars not found!")
+    local vs_toolset = vcvars.VCToolsVersion
+    if vs_toolset and semver.is_valid(vs_toolset) then
+        local vs_toolset_semver = semver.new(vs_toolset)
+        local msvc_version = "vc" .. vs_toolset_semver:major() .. tostring(vs_toolset_semver:minor()):sub(1, 1)
+        return opt.plat .. "-" .. opt.arch .. "-" .. msvc_version .. "-" .. buildhash
+    end
+end
+
 function export_artifacts(name, version, opt)
     local argv = {"lua", "private.xrepo", "export", "-yD", "--shallow", "-p", opt.plat, "-a", opt.arch, "-k", opt.kind}
     if opt.configs then
@@ -49,9 +63,9 @@ function export_artifacts(name, version, opt)
     end
     assert(buildhash, "buildhash not found!")
     local oldir = os.cd("artifacts")
-    local buildid = opt.plat .. "-" .. opt.arch .. "-" .. buildhash
     local artifactfile
     if opt.plat == "windows" then
+        local buildid = get_buildid_for_msvc(buildhash, opt)
         artifactfile = buildid .. ".7z"
         local z7 = assert(find_tool("7z"), "7z not found!")
         os.execv(z7.program, {"a", artifactfile, "*"})
@@ -67,11 +81,6 @@ function build(name, version, opt)
 end
 
 function main(...)
-    print(111111, os.filedirs("C:/Program Files (x86)/MSBuild/*"))
-    print(111111, os.filedirs("C:/Program Files (x86)/MSBuild/Microsoft.Cpp/*"))
-    print(111111, os.filedirs("C:/Program Files (x86)/MSBuild/Microsoft.Cpp/*/*"))
-    print(111111, os.filedirs("C:/Program Files (x86)/MSBuild/Microsoft.Cpp/*/*/*"))
-    print("VCTargetsPath", os.getenv("VCTargetsPath"))
     local opt = option.parse(table.pack(...), options, "Build artifacts.", "", "Usage: xmake l scripts/build.lua [options]")
     local buildinfo = io.load(path.join(os.scriptdir(), "..", "build.txt"))
     for _, version in ipairs(buildinfo.versions) do
