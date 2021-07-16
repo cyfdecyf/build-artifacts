@@ -29,10 +29,10 @@ jobs:
           gh --version
           Write-Output ${{ secrets.GITHUB_TOKEN }} | gh auth login --with-token
           
-      - uses: ilammy/msvc-dev-cmd@v1
+      - name: Add msbuild to PATH
+        uses: microsoft/setup-msbuild@v1.0.2
         with:
-          arch: ${{ matrix.arch }}
-          toolset: 14.0
+          vs-version: '[14.0,15.0)'
       
       - name: Configure Pagefile
         uses: al-cheb/configure-pagefile-action@v1.2
