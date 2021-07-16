@@ -67,8 +67,11 @@ function build(name, version, opt)
 end
 
 function main(...)
-    print(111111, os.filedirs("C:/Program Files (x86)/*"))
-       -- print(os.dirs("C:/**/MSBuild"))
+    print(111111, os.filedirs("C:/Program Files (x86)/MSBuild/*"))
+    print(111111, os.filedirs("C:/Program Files (x86)/MSBuild/Microsoft.Cpp/*"))
+    print(111111, os.filedirs("C:/Program Files (x86)/MSBuild/Microsoft.Cpp/*/*"))
+    print(111111, os.filedirs("C:/Program Files (x86)/MSBuild/Microsoft.Cpp/*/*/*"))
+
     local opt = option.parse(table.pack(...), options, "Build artifacts.", "", "Usage: xmake l scripts/build.lua [options]")
     local buildinfo = io.load(path.join(os.scriptdir(), "..", "build.txt"))
     for _, version in ipairs(buildinfo.versions) do
