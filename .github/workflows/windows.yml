@@ -28,7 +28,6 @@ jobs:
           scoop install gh
           gh --version
           Write-Output ${{ secrets.GITHUB_TOKEN }} | gh auth login --with-token
-          Write-Output "VCTargetsPath=C:\Program Files (x86)\MSBuild\Microsoft.Cpp\v4.0\v140" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf-8 -Append
 
       - name: Configure Pagefile
         uses: al-cheb/configure-pagefile-action@v1.2
@@ -39,14 +38,8 @@ jobs:
 
       - name: Build artifacts
         run: |
-          xmake create test
-          cd test
-          xmake f --vs=2015 -cvD
-          xmake -rvD
-          cd ..
-          xmake l os.getenvs
           xmake l detect.sdks.find_vstudio
-          xmake l scripts/build.lua -a ${{ matrix.arch }} -k ${{ matrix.kind }} -f "vs_runtime='${{ matrix.vs_runtime }}'" --vs=2015
+          xmake l scripts/build.lua -a ${{ matrix.arch }} -k ${{ matrix.kind }} -f "vs_runtime='${{ matrix.vs_runtime }}'"
 
   update:
     needs: build
