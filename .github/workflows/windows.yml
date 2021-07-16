@@ -28,12 +28,7 @@ jobs:
           scoop install gh
           gh --version
           Write-Output ${{ secrets.GITHUB_TOKEN }} | gh auth login --with-token
-          
-      - name: Add msbuild to PATH
-        uses: microsoft/setup-msbuild@v1.0.2
-        with:
-          vs-version: '[14.0,15.0)'
-      
+
       - name: Configure Pagefile
         uses: al-cheb/configure-pagefile-action@v1.2
         with:
@@ -43,6 +38,8 @@ jobs:
 
       - name: Build artifacts
         run: |
+          Invoke-WebRequest "https://aka.ms/vs/15/release/vs_buildtools.exe" -UseBasicParsing -OutFile ./vs_buildtools.exe
+          start /wait C:\TEMP\vs_buildtools.exe --quiet --wait --norestart --nocache --installPath C:\BuildTools --add Microsoft.VisualStudio.Workload.AzureBuildTools --remove Microsoft.VisualStudio.Component.Windows10SDK.10240 --remove Microsoft.VisualStudio.Component.Windows10SDK.10586 --remove Microsoft.VisualStudio.Component.Windows10SDK.14393 --remove Microsoft.VisualStudio.Component.Windows81SDK
           xmake create test
           cd test
           xmake f --vs=2015 -cvD
