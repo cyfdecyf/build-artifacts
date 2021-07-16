@@ -28,13 +28,7 @@ jobs:
           scoop install gh
           gh --version
           Write-Output ${{ secrets.GITHUB_TOKEN }} | gh auth login --with-token
-          Invoke-WebRequest "https://aka.ms/vs/15/release/vs_buildtools.exe" -UseBasicParsing -OutFile ./vs_buildtools.exe
 
-      - name: Prepare MSVC
-        shell: cmd
-        run: |
-          start /wait vs_buildtools.exe --wait --norestart --nocache --installPath C:\BuildTools --add Microsoft.VisualStudio.Workload.AzureBuildTools --remove Microsoft.VisualStudio.Component.Windows10SDK.10240 --remove Microsoft.VisualStudio.Component.Windows10SDK.10586 --remove Microsoft.VisualStudio.Component.Windows10SDK.14393 --remove Microsoft.VisualStudio.Component.Windows81SDK
-        
       - name: Configure Pagefile
         uses: al-cheb/configure-pagefile-action@v1.2
         with:
