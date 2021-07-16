@@ -43,6 +43,7 @@ jobs:
           xmake f --vs=2015 -cvD
           xmake -rvD
           cd ..
+          xmake l detect.sdks.find_vstudio
           xmake l scripts/build.lua -a ${{ matrix.arch }} -k ${{ matrix.kind }} -f "vs_runtime='${{ matrix.vs_runtime }}'" --vs=2015
 
   update:
