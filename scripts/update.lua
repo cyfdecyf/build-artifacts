@@ -10,8 +10,8 @@ function get_manifestkey(manifest)
     return key
 end
 
-function get_vcvars_for_msvc(buildhash, opt)
-    local msvc = toolchain.load("msvc", {plat = opt.plat, arch = opt.arch})
+function get_vcvars_for_msvc()
+    local msvc = toolchain.load("msvc")
     assert(msvc:check(), "msvc not found!")
     return assert(msvc:config("vcvars"), "vcvars not found!")
 end
@@ -31,15 +31,18 @@ function main()
         os.cd("build-artifacts")
         local manifestfile = path.join("packages", name:sub(1, 1), name, version, "manifest.txt")
         local manifest = os.isfile(manifestfile) and io.load(manifestfile) or {}
-        local manifest_oldkey = get_manifestkey(manifest)  
+        local manifest_oldkey = get_manifestkey(manifest)
+        local vcvars = get_vcvars_for_msvc()
         for _, asset in ipairs(assets_json) do
             local buildid = path.basename(asset.name)
             manifest[buildid] = {
                 urls = asset.url,
-                sha256 = hash.sha256(path.join("..", "assets", asset.name)),
-                toolset = vcvars.VCToolsVersion,
-                sdkver = vcvars.WindowsSDKVersion
+                sha256 = hash.sha256(path.join("..", "assets", asset.name))
             }
+            if asset.name:find("windows", 1, true) and vcvars then
+                manifest[buildid].toolset = vcvars.VCToolsVersion
+                manifest[buildid].sdkver = vcvars.WindowsSDKVersion
+            end
         end
         if get_manifestkey(manifest) == manifest_oldkey then
             print("manifest not changed!")
