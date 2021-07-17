@@ -10,7 +10,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [windows-latest]
+        os: [windows-2016]
         kind: [static, shared]
         arch: [x64, x86]
         vs_runtime: [MT, MD]
@@ -69,4 +69,4 @@ jobs:
           
       - name: Update manifest
         run: |
-          xmake l scripts/update.lua
+          #xmake l scripts/update.lua
