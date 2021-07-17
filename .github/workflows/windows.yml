@@ -39,7 +39,7 @@ jobs:
       - name: Build artifacts
         run: |
           xmake l detect.sdks.find_vstudio
-          xmake l scripts/build.lua -a ${{ matrix.arch }} -k ${{ matrix.kind }} -f "vs_runtime='${{ matrix.vs_runtime }}'"
+          xmake l scripts/build.lua -a ${{ matrix.arch }} -k ${{ matrix.kind }} --vs=2015 -f "vs_runtime='${{ matrix.vs_runtime }}'"
 
   update:
     needs: build
