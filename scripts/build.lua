@@ -85,6 +85,7 @@ function main(...)
     local buildinfo = io.load(path.join(os.scriptdir(), "..", "build.txt"))
     for _, version in ipairs(buildinfo.versions) do
         local artifactfile = build(buildinfo.name, version, opt)
+        --[[
         local tag = buildinfo.name .. "-" .. version
         local found = try {function () os.execv("gh", {"release", "view", tag}); return true end}
         if found then
@@ -94,6 +95,6 @@ function main(...)
             if not created then
                 os.execv("gh", {"release", "upload", "--clobber", tag, artifactfile})
             end
-        end
+        end]]
     end
 end
