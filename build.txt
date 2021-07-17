@@ -1,6 +1,6 @@
 {
-    name = "libjpeg",
+    name = "opencv",
     versions = {
-        "v9d"
+        "4.5.2"
     }
 }
